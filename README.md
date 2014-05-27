@@ -1,7 +1,7 @@
 # lolclojure
 
 A trip through the Land of Lisp... with Clojure. I decided to work through Conrad Barski's
-book [http://landoflisp.com/](Land of Lisp), but write all the code in Clojure instead of CL. 
+book [Land of Lisp](http://landoflisp.com), but write all the code in Clojure instead of CL. 
 
 ## License
 
