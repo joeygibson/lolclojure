@@ -1,20 +1,21 @@
 (ns lolclojure.ch3)
 
 ;; CL uses (defun...) to define functions, Clojure uses (defn...)
-(defn a-func
-  "Optional doc comment"
-  [x n]
-  (* x n))
+(defn square
+  "Returns the square of the passed-in number"
+  [n]
+  (* n n))
 
 ;; CL uses (eq...) for basic equality; Clojure uses (=...)
 (= 'foo 'foo)
 
 ;; CL has (expt) for exponents; Clojure has... nothing built in...
 ;; You could use Java's Math.pow, but it only does doubles
-(Math/pow 2 2)
-(Math/pow 2 3)
-(Math/pow 2 10)
-(Math/pow 53N 53)
+(Math/pow 2 2)                                              ; 4.0
+(Math/pow 2 3)                                              ; 8.0
+(Math/pow 2.0 3)                                            ; 8.0
+(Math/pow 2 10)                                             ; 1024.0
+(Math/pow 53N 53)                                           ; 2.4356848165022712E91
 
 ;; Here are two expt functions, both of which are tail recursive
 ;; The first uses a nested function
@@ -27,10 +28,11 @@
                    (recur (dec n) (* acc x))))]
     (rexpt n 1)))
 
-(expt 2 2)
-(expt 2 3)
-(expt 2 10)
-(expt 53N 53)
+(expt 2 2)                                                  ; 4
+(expt 2 3)                                                  ; 8
+(expt 2.0 3)                                                ; 8.0
+(expt 2 10)                                                 ; 1024
+(expt 53N 53)                                               ; 24356848165022712132477606520104725518533453128685640844505130879576720609150223301256150373
 
 ;; This one recurs on a loop instead of a nested function
 (defn expt
@@ -42,10 +44,11 @@
       acc
       (recur (dec n) (* acc x)))))
 
-(expt 2 2)
-(expt 2 3)
-(expt 2 10)
-(expt 53N 53)
+(expt 2 2)                                                  ; 4
+(expt 2 3)                                                  ; 8
+(expt 2.0 3)                                                ; 8.0
+(expt 2 10)                                                 ; 1024
+(expt 53N 53)                                               ; 24356848165022712132477606520104725518533453128685640844505130879576720609150223301256150373
 
 ;; CL uses (princ) (prin1) (print), etc. for output
 ;; Clojure has (print) (println), etc.
