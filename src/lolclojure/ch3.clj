@@ -61,17 +61,31 @@
 (def tuple [:a :b :c])                                      ; a vector of three items
 
 (vector 'chicken 'cat)                                      ; ~= (CHICKEN . CAT)
+['chicken 'cat]                                             ; ~= (CHICKEN . CAT)
 
-;; The other example on page 39 don't have direct equivalents
+;; (cons 'chicken 'cat) does not work in Clojure, use vector
+
+(cons 'chicken 'nil)                                        ; (chicken)
+(cons 'chicken ())                                          ; (chicken)
 
 ;; Clojure has (cons), but it adds an item to a list. It does not
 ;; create connected cons cells.
+(cons 'pork '(beef chicken))                                ; (pork beef chicken)
 (cons 'beef (cons 'chicken '()))                            ; (beef chicken)
-(cons 'pork (cons 'beef (cons 'chicken ())))                ; (pork beef chicken)
+(cons 'pork
+      (cons 'beef (cons 'chicken ())))                ; (pork beef chicken)
 
 ;; CL uses car, cdr, cadr, caddr, etc. Clojure has first, rest, second.
 (first '(pork beef chicken))                                ; (car '(pork beef chicken)) => pork
 (rest '(pork beef chicken))                                 ; (cdr '(pork beef chicken)) => (beef chicken)
+(next '(port beef chicken))                                 ; (cdr '(pork beef chicken)) => (beef chicken)
+
+;; next returns nil if there are no elements to return; rest returns an empty list
+(next '(pork))                                              ; nil
+(rest '(pork))                                              ; ()
+(next '())                                                  ; nil
+(rest '())                                                  ; ()
+
 (second '(pork beef chicken))                               ; (cadr '(pork beef chicken)) => beef
 
 ;; CL defines c*r functions, up to four levels deep. You *could* simulate these
@@ -80,48 +94,58 @@
   [lst]
   (rest (first lst)))
 
-(cdar '((peas carrots tomatoes) (pork beef chicken)))       ; (carrots tomatoes)
+(cdar '((peas carrots tomatoes)
+        (pork beef chicken)))       ; (carrots tomatoes)
 
 (defn cddr
   [lst]
   (rest (rest lst)))
 
-(cddr '((peas carrots tomatoes) (pork beef chicken) duck))  ; (duck)
+(cddr '((peas carrots tomatoes)
+        (pork beef chicken) duck))  ; (duck)
 
 (defn caddr
   [lst]
   (first (rest (rest lst))))
 
-(caddr '((peas carrots tomatoes) (pork beef chicken) duck)) ; duck
+(caddr '((peas carrots tomatoes)
+         (pork beef chicken) duck)) ; duck
 
 (defn cddar
   [lst]
   (rest (rest (first lst))))
 
-(cddar '((peas carrots tomatoes) (pork beef chicken) duck)) ; (tomatoes)
+(cddar '((peas carrots tomatoes)
+         (pork beef chicken) duck)) ; (tomatoes)
 
 (defn cadadr
   [lst]
   (first (rest (first (rest lst)))))
 
-(cadadr '((peas carrots tomatoes) (pork beef chicken) duck)) ; beef
+(cadadr '((peas carrots tomatoes)
+          (pork beef chicken) duck)) ; beef
 
 ;; But destructuring is probably a better choice
-(let [[fst] '((peas carrots tomatoes) (pork beef chicken))]
+(let [[fst] '((peas carrots tomatoes)
+              (pork beef chicken))]
   (rest fst))                                               ; (carrots tomatoes) ; instead of cdar
 
-(let [[_ & rst] '((peas carrots tomatoes) (pork beef chicken) duck)]
+(let [[_ & rst] '((peas carrots tomatoes)
+                  (pork beef chicken) duck)]
   (rest rst))                                               ; (duck) ; instead of cddr
 
-(let [[_ & rst] '((peas carrots tomatoes) (pork beef chicken) duck)
+(let [[_ & rst] '((peas carrots tomatoes)
+                  (pork beef chicken) duck)
       tail (rest rst)]
   (first tail))                                             ; duck ; instead of caddr
 
-(let [[fst] '((peas carrots tomatoes) (pork beef chicken) duck)
+(let [[fst] '((peas carrots tomatoes)
+              (pork beef chicken) duck)
       tail (rest fst)]
   (rest tail))                                              ; (tomatoes) ; instead of cddar
 
-(let [[_ & rst] '((peas carrots tomatoes) (pork beef chicken) duck)
+(let [[_ & rst] '((peas carrots tomatoes)
+                  (pork beef chicken) duck)
       fst (first rst)
       tail (rest fst)]
   (first tail))                                             ; beef ; instead of cadadr
